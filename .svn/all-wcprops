@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/pycontrol/!svn/ver/79/pycontrol2/trunk/pycontrol
+END
+Installation.txt
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/pycontrol/!svn/ver/69/pycontrol2/trunk/pycontrol/Installation.txt
+END
+pycontrol.py
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/pycontrol/!svn/ver/86/pycontrol2/trunk/pycontrol/pycontrol.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/pycontrol/!svn/ver/66/pycontrol2/trunk/pycontrol/__init__.py
+END
+utils.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/pycontrol/!svn/ver/70/pycontrol2/trunk/pycontrol/utils.py
+END
+setup.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/pycontrol/!svn/ver/82/pycontrol2/trunk/pycontrol/setup.py
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/pycontrol/!svn/ver/77/pycontrol2/trunk/pycontrol/README
+END

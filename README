@@ -1,0 +1,150 @@
+Welcome to pycontrol, version 2.
+
+#-----------------------------------------------------------------------------------
+Features. Many of the new features are driven by Suds, the new underlying Soap API.
+#-----------------------------------------------------------------------------------
+
+- Attribute-driven for easy introspection of iControl.
+
+- Optional single-file install. No longer requires root access. Just drop it somewhere you'll remember and
+add it to sys.path, or drop it onto sys.path itself.
+
+- On-box WSDL or remote-fetch. This means you can have *multiple* WSDL versions available and it's
+easy to point pycontrol either to a BigIP or a local WSDL file.
+
+- Support for concurrent calls via the suds clone() method. For example, clone() multiple pycontrol objects,
+then use threads to call multiple systems concurrently and fetch results (See samples dir).
+
+- Somewhat backward-compatible with pyControl version 1.x (most 'getter' methods and some setter methods).
+
+- Sane exception handling. More features here will be added in future releases. For example, now we see information that 
+is actually useful:
+
+		WebFault: Server raised fault: 'Exception caught in LocalLB::urn:iControl:LocalLB/Pool::get_lb_method()
+		Exception: Common::OperationFailed
+				primary_error_code   : 16908342 (0x01020036)
+				secondary_error_code : 0
+				error_string         : 01020036:3: The requested pool (fa) was not found
+
+With pycontrol v2 we clearly see that we've passed a pool name that doesn't exist. The old pycontrol would just 
+die semi-silently with a Qname error.
+
+- Easy debug logging via standard syslog facilities. Set "debug=True" on instantiation for trace logging.
+
+- Support for in-object endpoint changes. This allows you to create one object for, say, LocalLB.Pool and point it
+to different BigIP systems. ***NOTE*** this functionality requires a local directory fetch of the WSDL (i.e. the 'fromurl'  won't work).
+
+- New arguments to support:
+	- Arbitrary directories where local WSDLs live. This allows multiple WSDL versions.
+	- HTTP fetch of WSDLs from a BigIP device. 
+
+- "Pythonic" type objects with attributes. For example, you create a 'Common.IPPortMember' object, then set 
+its 'address' and 'port' attributes.
+
+- Exposure of the underlying SOAP API, Suds. This will allow for power-users to get at all of the underlying API for 100% flexibility.
+Suds is an excellent, fast-moving project. See https://fedorahosted.org/suds/ for more information on this excellent library. 
+
+- Easy logging. Just pass in debug=True when you create your pycontrol object for meaningful logging to stdout/stderr. This will dump 
+the raw XML to stdout so you can see what is going on.
+
+#-----------
+INSTALLATION
+#-----------
+
+Unzip the bundle into a directory, cd into it, then run 'python setup.py install'.
+
+Then confirm. For example:
+
+Python 2.6 (r26:66721, Oct  2 2008, 11:35:03) [MSC v.1500 32 bit (Intel)] on win
+32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import pycontrol.pycontrol
+>>> print pycontrol.pycontrol.__version__
+2.0
+>>> print pycontrol.pycontrol.__revision__
+r67
+
+Alternatively, extract the bundle and just put pycontrol.py somewhere on your path.
+
+#---------
+Quickstart
+#---------
+
+Initialization: Fetch the remote WSDL with the 'fromurl' argument.
+
+In [2]: import pycontrol.pycontrol as pc
+In [3]: b = pc.BIGIP(hostname='192.168.1.245', username='admin', password='admin', fromurl=True, wsdls = ['LocalLB.Pool'])
+# Now let's fetch a list.
+In [4]: b.LocalLB.Pool.get_list()
+Out[4]:
+[test,
+ pyc2,
+ dummyServer,
+ WEBSITE_POOL,
+ TEST,
+ PC21258742809,
+ PC21258652929,
+ PC21258652776,
+ PC21258652836,
+ test2,
+ test3,
+ PC21259981530,
+ PC21259981832,
+ test1]
+
+Now, let's point pycontrol to a local directory with a cache of our WSDLs. This example is on Windows,
+hence the silly looking path.
+
+In [6]: b = pc.BIGIP(hostname='10.100.100.245', username='admin', password='admin', directory='c:\\tmp\\', wsdls=['LocalLB.Pool'])
+...which will behave mostly the same way.
+
+See the samples directory and the tutorial for using the type factory.
+
+#-------------------------
+Frequently asked questions
+#-------------------------
+
+Will my old pyControl code work? 
+	- Many *basic* calls will work in the same way, although return types are different. You'll need to refactor your code.
+
+What's with the stronger typing? Why can't I just pass in normal python data structures into my calls?
+	- In some cases, you can (this is why we require Suds >= 0.3.8, with improved Soap-enc: array support).
+      However, if you're creating more complex objects (like a virtual server), you'll need to use the factory()
+      method to create your types. Then you simply set python attributes against them. See the sample code for ideas on how to 
+      do this. This allows suds to marshall/un-marshall the python objects correctly, and allows us to set attributes instead of
+	  wading through a nested set of lists with dict() object inside of them :).
+
+How can I figure out how to create my types? 
+	- Use the API. Pycontrol v2 adheres to the iControl API very closely, so let the API guide you. Pycontrol
+	  has two attributes to help give you hints on how to build a particular call: 'params' and 'response_type'. 
+	  For example: 
+
+		In [10]: b.LocalLB.Pool.get_simple_timeout.params
+		Out[10]: [(pool_names, u'Common.StringSequence')]
+
+		In [11]: b.LocalLB.Pool.get_simple_timeout.response_type
+		Out[11]: u'Common.ULongSequence'
+
+	  ...Which tells us what we need to pass in, and what to expect as a response.
+
+
+#------------
+Known issues
+#------------
+
+-- fromurl=True and directory='/foo/' behave differently with clone and with the set_options() Suds method. To change
+the endpoint on a single pycontrol object, you'll need to construct the object with the 'directory' argument, not
+'fromurl'. The reason for this is subtle but tricky: the Suds transport API is setup in a way to deal with basic authentication
+bugs from various servers. It's not clear if these two options will ever be fully consistent.
+
+-- 'Mismatched tag' errors on init from the underlying SAX handler. I've tried to work around this issue with pycontrol. 
+Please let me know if you run into it. Note that a bad WSDL name can erroneously cause this exception as well. Suds has
+a cache feature, which we really don't need or use - there is a difficult to find (and understand) bug with the caching
+code. Likely to be fixed in subsequent versions of Suds. For now, pycontrol should work around it with a try/except block.
+
+-- "Duplicate Domain" errors may be thrown from Suds if you're using directory='' in the constructor to pycontrol. This occurs
+when the WSDL you're referring to doesn't exist in the directory you've pointed pycontrol to. 
+TODO: We'll need to add a check for the wsdl file and thow a fatal exception if it doesn't exist.
+
+-- "Maximum recursion" warnings on python 2.6 with the clone() method. This is a non-fatal warning
+thown by Python 2.6. Likely related to issue 5508: http://bugs.python.org/issue5508

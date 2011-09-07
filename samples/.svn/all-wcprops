@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/pycontrol/!svn/ver/76/pycontrol2/trunk/pycontrol/samples
+END
+disable_member.py
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/pycontrol/!svn/ver/76/pycontrol2/trunk/pycontrol/samples/disable_member.py
+END
+make_virtualServer.py
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/pycontrol/!svn/ver/76/pycontrol2/trunk/pycontrol/samples/make_virtualServer.py
+END
+getpools.py
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/pycontrol/!svn/ver/76/pycontrol2/trunk/pycontrol/samples/getpools.py
+END
+create_partition.py
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/pycontrol/!svn/ver/76/pycontrol2/trunk/pycontrol/samples/create_partition.py
+END
+concurrentcall.py
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/pycontrol/!svn/ver/76/pycontrol2/trunk/pycontrol/samples/concurrentcall.py
+END
+make_pool.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/pycontrol/!svn/ver/76/pycontrol2/trunk/pycontrol/samples/make_pool.py
+END
