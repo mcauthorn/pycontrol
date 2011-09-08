@@ -79,9 +79,9 @@ class BIGIP(object):
         # Setup the object cache
         if cache:
             self.cache = cache
-        else: 
+        else:
             self.cache = ObjectCache(days=30)
-        
+
         if self.debug == True:
             self._set_trace_logging()
 
@@ -153,7 +153,7 @@ class BIGIP(object):
         return c
 
     def _set_url(self, wsdl):
-        """ 
+        """
         Set the path of file-based wsdls for processing.If not file-based,
         return a fully qualified url to the WSDL
         """
@@ -169,7 +169,7 @@ class BIGIP(object):
                 pass
             else:
                 wsdl = wsdl + '.wsdl'
-        
+
             # Check for windows and use goofy paths. Otherwise assume *nix
             if platform.system().lower() == 'windows':
                 url = 'file:' + pathname2url(self.directory +'\\' + wsdl)
@@ -187,7 +187,7 @@ class BIGIP(object):
             setattr(self, module, ModuleInstance(module) )
 
     def _set_interface_sudsclient(self, c):
-        """ 
+        """
         Set an attribute that points to the actual suds client. This
         will allow for power-users to get at suds client internals.
         """
@@ -203,7 +203,7 @@ class BIGIP(object):
         setattr(module, interface, InterfaceInstance(interface))
 
     def _set_interface_methods(self, c):
-        """ 
+        """
         Sets up methods as attributes for a particular iControl interface.
         Method keys (attrs) point to suds.service objects for the interface.
         """
@@ -226,19 +226,19 @@ class BIGIP(object):
         """
 
         m = c.sd[0].ports[0][0].method(method)
-        params = [] 
+        params = []
         for x in m.soap.input.body.parts:
             params.append((x.name, x.type[0]))
-        setattr(interface_method, 'params', params) 
+        setattr(interface_method, 'params', params)
 
     def _set_return_type(self, c, interface_method, method):
         """ Sets the return type in an attribute named response_type"""
         m = c.sd[0].ports[0][0].method(method)
         if len(m.soap.output.body.parts):
             res = m.soap.output.body.parts[0].type[0]
-            setattr(interface_method, 'response_type', res) 
+            setattr(interface_method, 'response_type', res)
         else:
-            setattr(interface_method, 'response_type', None) 
+            setattr(interface_method, 'response_type', None)
 
 
     def _set_type_factory(self, c):
@@ -282,6 +282,6 @@ def main():
     print "Pools:"
     for x in pools:
         print "\t%s" % x
-    
+
 if __name__ == '__main__':
     main()
