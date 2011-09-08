@@ -26,8 +26,7 @@ is actually useful:
 				secondary_error_code : 0
 				error_string         : 01020036:3: The requested pool (fa) was not found
 
-With pycontrol v2 we clearly see that we've passed a pool name that doesn't exist. The old pycontrol would just 
-die semi-silently with a Qname error.
+With pycontrol v2 we clearly see that we've passed a pool name that doesn't exist. The old pycontrol would just die semi-silently with a Qname error.
 
 - Easy debug logging via standard syslog facilities. Set "debug=True" on instantiation for trace logging.
 
@@ -132,19 +131,11 @@ How can I figure out how to create my types?
 Known issues
 #------------
 
--- fromurl=True and directory='/foo/' behave differently with clone and with the set_options() Suds method. To change
-the endpoint on a single pycontrol object, you'll need to construct the object with the 'directory' argument, not
-'fromurl'. The reason for this is subtle but tricky: the Suds transport API is setup in a way to deal with basic authentication
-bugs from various servers. It's not clear if these two options will ever be fully consistent.
+-- fromurl=True and directory='/foo/' behave differently with clone and with the set_options() Suds method. To change the endpoint on a single pycontrol object, you'll need to construct the object with the 'directory' argument, not 'fromurl'. The reason for this is subtle but tricky: the Suds transport API is setup in a way to deal with basic authentication bugs from various servers. It's not clear if these two options will ever be fully consistent.
 
--- 'Mismatched tag' errors on init from the underlying SAX handler. I've tried to work around this issue with pycontrol. 
-Please let me know if you run into it. Note that a bad WSDL name can erroneously cause this exception as well. Suds has
-a cache feature, which we really don't need or use - there is a difficult to find (and understand) bug with the caching
-code. Likely to be fixed in subsequent versions of Suds. For now, pycontrol should work around it with a try/except block.
+-- 'Mismatched tag' errors on init from the underlying SAX handler. I've tried to work around this issue with pycontrol.  Please let me know if you run into it. Note that a bad WSDL name can erroneously cause this exception as well. Suds has a cache feature, which we really don't need or use - there is a difficult to find (and understand) bug with the caching code. Likely to be fixed in subsequent versions of Suds. For now, pycontrol should work around it with a try/except block.
 
--- "Duplicate Domain" errors may be thrown from Suds if you're using directory='' in the constructor to pycontrol. This occurs
-when the WSDL you're referring to doesn't exist in the directory you've pointed pycontrol to. 
-TODO: We'll need to add a check for the wsdl file and thow a fatal exception if it doesn't exist.
+-- "Duplicate Domain" errors may be thrown from Suds if you're using directory='' in the constructor to pycontrol. This occurs when the WSDL you're referring to doesn't exist in the directory you've pointed pycontrol to.  TODO: We'll need to add a check for the wsdl file and thow a fatal exception if it doesn't exist.
 
 -- "Maximum recursion" warnings on python 2.6 with the clone() method. This is a non-fatal warning
-thown by Python 2.6. Likely related to issue 5508: http://bugs.python.org/issue5508
+thrown by Python 2.6. Likely related to issue 5508: http://bugs.python.org/issue5508
