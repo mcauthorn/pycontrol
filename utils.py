@@ -47,21 +47,21 @@ log = getLogger(__name__)
 ICONTROL_URI = "/iControl/iControlPortal.cgi"
 
 def longest_common_prefix(strings):
-    """ 
+    """
     Taken from: http://boredzo.org/blog/archives/2007-01-06/longest-common-prefix-in-python-2
     This function returns the longest common prefix of one or more sequences. Raises an exception when zero sequences are provided.
     """
-    assert strings, 'Longest common prefix of no strings requested. Such behavior is highly irrational and is not tolerated by this program.' 
-    
-    if len(strings) == 1: return strings[0] 
-    
+    assert strings, 'Longest common prefix of no strings requested. Such behavior is highly irrational and is not tolerated by this program.'
+
+    if len(strings) == 1: return strings[0]
+
     strings = [pair[1] for pair in sorted((len(fi), fi) for fi in strings)]
-    
-    for i, comparison_ch in enumerate(strings[0]): 
-        for fi in strings[1:]: 
-            ch = fi[i] 
-            if ch != comparison_ch: 
-                return fi[:i] 
+
+    for i, comparison_ch in enumerate(strings[0]):
+        for fi in strings[1:]:
+            ch = fi[i]
+            if ch != comparison_ch:
+                return fi[:i]
     return strings[0]
 
 def setupHTTPAuth(url, username, password):
@@ -92,10 +92,10 @@ def get_wsdls(options):
 
     log.info("Done. Found %d WSDLs" % len(wsdl_names))
     log.info("Downloading required WSDLs...")
-    
+
     n = 0
     for wsdl_name in wsdl_names:
-        #if options.setup_demo and not wsdl_name=="LocalLB.Pool": 
+        #if options.setup_demo and not wsdl_name=="LocalLB.Pool":
         #    continue
         #if not is_matching_wsdl(wsdl_name, options.setup_wsdl_patterns):
         #    continue
@@ -132,7 +132,7 @@ class WebParser(sgmllib.SGMLParser):
         "Parse the given string 's'."
         self.feed(s)
         self.close()
-    
+
     def __init__(self, verbose=0):
         "Initialise an object, passing 'verbose' to the superclass."
         sgmllib.SGMLParser.__init__(self, verbose)
@@ -165,7 +165,7 @@ class UsefulU64(object):
     """
     A port of this Java class to Python:
     http://devcentral.f5.com/Default.aspx?tabid=63&articleType=ArticleView&articleId=78
-    
+
     Makes dealing with the "ULong64 type returned in statistics calls from the iControl API" easier.
     """
     def __init__(self,ulong):
@@ -177,28 +177,28 @@ class UsefulU64(object):
         rollOver += 1
         tmpVal=0
         if(high >=0):
-            tmpVal = high << 32 & 0xffff0000 
+            tmpVal = high << 32 & 0xffff0000
         else:
-            tmpVal = ((high & 0x7fffffff) << 32) + (0x80000000 << 32)     
+            tmpVal = ((high & 0x7fffffff) << 32) + (0x80000000 << 32)
         if(low >=0):
-            tmpVal = tmpVal + low 
+            tmpVal = tmpVal + low
         else:
             tmpVal = tmpVal + (low & 0x7fffffff) + rollOver
 
         self.value=tmpVal
-        
+
     def __str__(self):
         size = ""
         value=self.value
         if(value / 1024 >= 1.0):
             size = "K"
-            value = value / 1024 
-        if(value / 1024 >= 1.0): 
+            value = value / 1024
+        if(value / 1024 >= 1.0):
             size = "M"
-            value = value / 1024 
-        if(value / 1024 >= 1.0): 
+            value = value / 1024
+        if(value / 1024 >= 1.0):
             size = "G"
-            value = value / 1024 
+            value = value / 1024
         return "%.2f%s"%(value,size)
     def __call__(self):
         return self.__str__()
@@ -207,7 +207,7 @@ class Options(object):
     pass
 
 if __name__ == '__main__':
-    
+
     if len(sys.argv) < 4:
         print "Usage: %s <hostname> <username> <password>"% sys.argv[0]
         sys.exit()
