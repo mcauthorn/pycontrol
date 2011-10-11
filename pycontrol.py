@@ -52,9 +52,10 @@ from suds.transport.http import HttpAuthenticated
 IMP = Import('http://schemas.xmlsoap.org/soap/encoding/')
 DOCTOR = ImportDoctor(IMP)
 ICONTROL_URI = '/iControl/iControlPortal.cgi'
+SESSION_WSDL = 'System.Session'
 
-__version__ = '2.0.1'
-__build__ = 'r86'
+__version__ = '2.1'
+__build__ = 'r1'
 
 
 class BIGIP(object):
@@ -64,7 +65,7 @@ class BIGIP(object):
     """
     def __init__(self, hostname=None, username=None, password=None,
             wsdls=None, directory=None, fromurl=False, debug=False,
-            proto='https',cache=None, **kwargs):
+            proto='https',sessions=False,cache=None, **kwargs):
 
         self.wsdls = wsdls
         self.hostname = hostname
@@ -75,6 +76,7 @@ class BIGIP(object):
         self.proto = proto
         self.debug = debug
         self.kw = kwargs
+        self.sessions = sessions
 
         # Setup the object cache
         if cache:
@@ -86,6 +88,10 @@ class BIGIP(object):
             self._set_trace_logging()
 
         location = '%s://%s%s' % (self.proto,self.hostname, ICONTROL_URI)
+
+        if self.sessions:
+            self.
+
         self.clients = self._get_clients()
         for client in self.clients:
 
@@ -100,9 +106,28 @@ class BIGIP(object):
     #---------------------
     # Setters and getters.
     #---------------------
+    def get_sessionid(self):
+        ''' Fetch a session identifier from a v11.x BigIP.'''
+        sessionid = self.sess.System.Session.get_session_identifier()
+        return sessionid
+
+    def set_sessionid(self,sessionid):
+        '''
+        Sets the session header for all clients.
+        @sessionid (String) = session_id to add to the X-iControl-Session header.
+        '''
+        for client in self.clients:
+            client.set_options(headers = {'X-iControl-Session': sessionid})
+
+
+    def _get_session_client(self):
+        '''loads the System.Session client loaded independently of the others.'''
+         url = self._set_url(SESSION_WSDL)
+         session = self._get_suds_client(url,**self.kw)
+         return session
+
     def _get_clients(self):
             """ Get a suds client for the wsdls passed in."""
-
             clients = []
             for wsdl in self.wsdls:
                 url = self._set_url(wsdl)
@@ -140,7 +165,9 @@ class BIGIP(object):
     def _get_suds_client(self, url,**kw):
         """
         Make a suds client for a specific WSDL (via url).
-        Added new Suds cache features.
+        Added new Suds cache features. Warning: These don't work on
+        Windows. *nix should be fine. Also exposed general kwargs to pass
+        down to Suds for advance users who don't want to deal with set_options().
         """
 
         if self.fromurl == False:
