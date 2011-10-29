@@ -1,4 +1,11 @@
-Welcome to pycontrol, version 2.
+Welcome to pycontrol, version 2.1.
+
+New features in this release: session support for BigIP v11.x, aribtrary suds kwargs can now be passed into 
+pycontrol, e.g. retxml=True.
+
+To use sessions, simply pass in sesssions=True into your keyword arguments list. This will automatically load
+the System.Sessions WSDL, fetch a sessionid, and add it to your subsequent calls. Transaction support
+is all done manually via the System.Session WSDL so you've got full control.
 
 #-----------------------------------------------------------------------------------
 Features. Many of the new features are driven by Suds, the new underlying Soap API.
@@ -14,8 +21,6 @@ easy to point pycontrol either to a BigIP or a local WSDL file.
 
 - Support for concurrent calls via the suds clone() method. For example, clone() multiple pycontrol objects,
 then use threads to call multiple systems concurrently and fetch results (See samples dir).
-
-- Somewhat backward-compatible with pyControl version 1.x (most 'getter' methods and some setter methods).
 
 - Sane exception handling. More features here will be added in future releases. For example, now we see information that 
 is actually useful:
@@ -102,9 +107,6 @@ See the samples directory and the tutorial for using the type factory.
 #-------------------------
 Frequently asked questions
 #-------------------------
-
-Will my old pyControl code work? 
-	- Many *basic* calls will work in the same way, although return types are different. You'll need to refactor your code.
 
 What's with the stronger typing? Why can't I just pass in normal python data structures into my calls?
 	- In some cases, you can (this is why we require Suds >= 0.3.8, with improved Soap-enc: array support).

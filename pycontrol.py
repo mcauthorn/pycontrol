@@ -55,7 +55,7 @@ ICONTROL_URI = '/iControl/iControlPortal.cgi'
 SESSION_WSDL = 'System.Session'
 
 __version__ = '2.1'
-__build__ = 'r1'
+__build__ = 'r3'
 
 
 class BIGIP(object):
@@ -67,16 +67,16 @@ class BIGIP(object):
             wsdls=None, directory=None, fromurl=False, debug=False,
             proto='https',sessions=False,cache=None, **kwargs):
 
-        self.wsdls = wsdls
         self.hostname = hostname
         self.username = username
         self.password = password
         self.directory = directory
+        self.sessions = sessions
         self.fromurl = fromurl
         self.proto = proto
         self.debug = debug
         self.kw = kwargs
-        self.sessions = sessions
+        self.sessionisset = False
 
         # Setup the object cache
         if cache:
@@ -90,11 +90,19 @@ class BIGIP(object):
         location = '%s://%s%s' % (self.proto,self.hostname, ICONTROL_URI)
 
         if self.sessions:
-            self.
+            '''This if block forces System.Session into index 0 in the wsdl list.'''
+            if SESSION_WSDL in wsdls:
+                self.wsdls = [x for x in wsdls if not x.startswith('System.Session')]
+                self.wsdls.insert(0,SESSION_WSDL)
+            else:
+                self.wsdls = wsdls
+                self.wsdls.insert(0,SESSION_WSDL)
+        else:
+            self.wsdls = wsdls
 
         self.clients = self._get_clients()
-        for client in self.clients:
 
+        for client in self.clients:
             self._set_module_attributes(client)
             self._set_interface_attributes(client)
             self._set_interface_sudsclient(client)
@@ -103,28 +111,31 @@ class BIGIP(object):
             client.factory.separator('_')
             client.set_options(location=location, cache=self.cache)
 
+            if self.sessions:
+                if self.sessionisset:
+                    pass
+                else:
+                    self.sessionid=self.get_sessionid()
+                self.set_sessionid(self.sessionid.__str__(), client)
+
     #---------------------
     # Setters and getters.
     #---------------------
+
     def get_sessionid(self):
-        ''' Fetch a session identifier from a v11.x BigIP.'''
-        sessionid = self.sess.System.Session.get_session_identifier()
+        '''Fetch a session identifier from a v11.x BigIP.'''
+        mod = getattr(self, 'System')
+        sessionid = getattr(mod, 'Session').get_session_identifier()
+        self.sessionisset = True
         return sessionid
 
-    def set_sessionid(self,sessionid):
+    def set_sessionid(self,sessionid,client):
         '''
-        Sets the session header for all clients.
-        @sessionid (String) = session_id to add to the X-iControl-Session header.
+        Sets the session header for a client.
+        @sessionid (String) - session_id to add to the X-iControl-Session header.
+        @client - client object.
         '''
-        for client in self.clients:
-            client.set_options(headers = {'X-iControl-Session': sessionid})
-
-
-    def _get_session_client(self):
-        '''loads the System.Session client loaded independently of the others.'''
-         url = self._set_url(SESSION_WSDL)
-         session = self._get_suds_client(url,**self.kw)
-         return session
+        client.set_options(headers = {'X-iControl-Session': sessionid})
 
     def _get_clients(self):
             """ Get a suds client for the wsdls passed in."""
@@ -164,7 +175,7 @@ class BIGIP(object):
 
     def _get_suds_client(self, url,**kw):
         """
-        Make a suds client for a specific WSDL (via url).
+        Make a suds client for a specifij WSDL (via url).
         Added new Suds cache features. Warning: These don't work on
         Windows. *nix should be fine. Also exposed general kwargs to pass
         down to Suds for advance users who don't want to deal with set_options().
