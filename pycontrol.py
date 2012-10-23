@@ -184,10 +184,10 @@ class BIGIP(object):
         if self.fromurl == False:
             # We're file:// access, so don't use https transport.
             t = HttpAuthenticated(username = self.username, password = self.password)
-            c = Client(url, transport=t, doctor=DOCTOR,**kw)
+            c = Client(url, transport=t, doctor=DOCTOR,cache=self.cache,**kw)
         else:
             c = Client(url, username=self.username,
-                    password=self.password,doctor=DOCTOR,**kw)
+                    password=self.password,doctor=DOCTOR,cache=self.cache,**kw)
         return c
 
     def _set_url(self, wsdl):
