@@ -1,0 +1,28 @@
+Welcome to pycontrol, version 2.
+
+#-----------
+INSTALLATION
+#-----------
+
+Requires: Suds > 0.3.8. You can find this version of suds at 
+https://fedorahosted.org/releases/s/u/suds/python-suds-0.3.8.tar.gz
+
+Unzip Suds into a temp directory, cd into it, then run 'python setup.py install'.
+
+Download pycontrol v2, and follow the same steps: Unzip the bundle into a directory, 
+cd into it, then run 'python setup.py install'.
+
+Then confirm. For example:
+
+Python 2.6 (r26:66721, Oct  2 2008, 11:35:03) [MSC v.1500 32 bit (Intel)] on win
+32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import pycontrol.pycontrol
+>>> print pycontrol.pycontrol.__version__
+2.0
+>>> print pycontrol.pycontrol.__revision__
+r67
+
+# Note that your revision number may be higher. That's OK.
+
+Alternatively, extract the bundle and just put pycontrol.py somewhere on your path.
