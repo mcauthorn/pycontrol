@@ -1,4 +1,3 @@
-
 from setuptools import setup
 
 setup(
@@ -8,9 +7,12 @@ setup(
                         with F5's BIG-IP iControl management API.""",
     version='2.1',
     license='GPL',
+    author='Matt Cauthorn',
+    author_email='mcauthorn@gmail.com',
     url='https://github.com/mcauthorn/pycontrol',
     keywords='iControl F5 API',
-    py_modules=['pycontrol'],
+    #py_modules=['pycontrol'],
+    packages=['pycontrol',],
     install_requires=['distribute', 'suds>=0.3.9'],
     platforms='any',
     classifiers=[
