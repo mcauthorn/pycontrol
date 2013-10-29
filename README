@@ -1,3 +1,21 @@
+###
+NOTE NOTE NOTE
+
+I'm no longer working on this project, so feel free to fork it. No time and no f5 gear to test with,
+so it makes little sense for me to try and maintain it.
+
+For the current Python API to f5 Big-IP products, see DevCentral (devcentral.f5.com) for BigSuds, the new
+version.
+
+Thanks for your interst in Pycontrol! It was a small project that lots of people used, which is really gratifying and
+I sincerely hope you found it useful. Please feel free to hack on it and make it better if you think
+it's worth keeping alive!
+
+--Matt
+
+###
+
+
 Welcome to pycontrol, version 2.1.
 
 New features in this release: session support for BigIP v11.x, aribtrary suds kwargs can now be passed into 
